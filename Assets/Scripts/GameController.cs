@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 internal enum gameState {
     gameplay, gamewin, gameover
@@ -12,6 +11,8 @@ public class GameController : MonoBehaviour
 {
     int levelTime = 90;
     int score;
+
+    TransitionController _transitionController;
 
     [Header("Gameplay Config.")]
     internal gameState currentState;
@@ -45,6 +46,7 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _transitionController = FindObjectOfType(typeof(TransitionController)) as TransitionController;
         timeText.text = levelTime.ToString();
         StartCoroutine(levelCountdown());
     }
@@ -142,6 +144,6 @@ public class GameController : MonoBehaviour
     internal IEnumerator loadSceneWithDelay(int sceneIndex, float delay)
     {
         yield return new WaitForSeconds(delay);
-        SceneManager.LoadScene(sceneIndex);
+        _transitionController.startFade(sceneIndex);
     }
 }
