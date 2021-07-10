@@ -10,16 +10,21 @@ public class Player : MonoBehaviour
     Rigidbody2D playerRb;
     Animator playerAnim;
 
+    [Header("Move Config.")]
     [SerializeField] float moveSpeed;
     [SerializeField] float jumpForce;
     [SerializeField] AudioSource fxSource;
     [SerializeField] AudioClip fxJump;
+
+    [Header("Ground Check")]
+    [SerializeField] LayerMask whatIsGround;
+    [SerializeField] Transform groundCheckLeft;
+    [SerializeField] Transform groundCheckRight;
+
     bool isLookLeft;
     bool isGrounded;
     float speedX;
     float speedY;
-    public LayerMask whatIsGround;
-    public Transform groundCheck;
 
     // Start is called before the first frame update
     void Start()
@@ -77,7 +82,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.02f, whatIsGround);
+        isGrounded = Physics2D.OverlapArea(groundCheckLeft.position, groundCheckRight.position, whatIsGround);
         playerRb.velocity = new Vector2(speedX * moveSpeed, speedY);
     }
 
