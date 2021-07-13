@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
     int score;
 
     TransitionController _transitionController;
+    OptionsController _optionsController;
 
     [Header("Gameplay Config.")]
     internal gameState currentState;
@@ -26,14 +27,11 @@ public class GameController : MonoBehaviour
     [SerializeField] Text scoreText;
     [SerializeField] Text timeText;
 
-    [Header("Audio Config.")]
-    [SerializeField] AudioSource fxMusic;
-    [SerializeField] AudioSource fxSource;
-    [SerializeField] AudioSource fxAlertSource;
+    [Header("Audio Clips")]
     [SerializeField] AudioClip fxCollect;
-    [SerializeField] AudioClip fxGameWin;
-    [SerializeField] AudioClip fxGameOver;
     [SerializeField] AudioClip fxEnemy;
+    [SerializeField] AudioClip fxLevelFailed;
+    [SerializeField] AudioClip fxLevelSuccess;
 
     [Header("Enemy Config.")]
     [SerializeField] GameObject enemyPrefab;
@@ -47,6 +45,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         _transitionController = FindObjectOfType(typeof(TransitionController)) as TransitionController;
+        _optionsController = FindObjectOfType(typeof(OptionsController)) as OptionsController;
         timeText.text = levelTime.ToString();
         StartCoroutine(levelCountdown());
     }
@@ -65,7 +64,7 @@ public class GameController : MonoBehaviour
     {
         if (levelTime == 30)
         {
-            fxMusic.pitch = 1.3f;
+            _optionsController.musicSource.pitch = 1.3f;
         }
     }
 
@@ -82,9 +81,9 @@ public class GameController : MonoBehaviour
 
         if (rand < 50)
         {
-            fxAlertSource.panStereo = -1;
-            fxAlertSource.PlayOneShot(fxEnemy);
-            yield return new WaitForSeconds(1f);
+            _optionsController.alertSource.panStereo = -1;
+            _optionsController.alertSource.PlayOneShot(fxEnemy);
+            yield return new WaitForSeconds(2f);
 
             GameObject enemy = Instantiate(enemyPrefab);
             enemy.transform.position = new Vector3(leftSpawn.position.x, enemy.transform.position.y, enemy.transform.position.z);
@@ -92,8 +91,8 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            fxAlertSource.panStereo = 1;
-            fxAlertSource.PlayOneShot(fxEnemy);
+            _optionsController.alertSource.panStereo = 1;
+            _optionsController.alertSource.PlayOneShot(fxEnemy);
             yield return new WaitForSeconds(1f);
 
             GameObject enemy = Instantiate(enemyPrefab);
@@ -121,24 +120,24 @@ public class GameController : MonoBehaviour
     public void gameOver()
     {
         Debug.LogError("Game Over!");
-        fxSource.PlayOneShot(fxGameOver);
         currentState = gameState.gameover;
-        StartCoroutine(loadSceneWithDelay(3, 1.5f));
+        _optionsController.StartCoroutine(_optionsController.changeMusic(fxLevelFailed, false));
+        StartCoroutine(loadSceneWithDelay(5, 1.5f));
     }
 
     public void setScore(int points)
     {
         score += points;
         scoreText.text = score.ToString();
-        fxSource.PlayOneShot(fxCollect);
+        _optionsController.fxSource.PlayOneShot(fxCollect);
     }
 
     internal void gameWin()
     {
         Debug.Log("Game Win!");
-        fxSource.PlayOneShot(fxGameWin);
         currentState = gameState.gamewin;
-        StartCoroutine(loadSceneWithDelay(2, 2.5f));
+        _optionsController.StartCoroutine(_optionsController.changeMusic(fxLevelSuccess, false));
+        StartCoroutine(loadSceneWithDelay(4, 2f));
     }
 
     internal IEnumerator loadSceneWithDelay(int sceneIndex, float delay)
