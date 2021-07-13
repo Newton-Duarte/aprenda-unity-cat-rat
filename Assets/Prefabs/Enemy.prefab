@@ -143,5 +143,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0c828400863b1d4ea31c10f776f5877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackClip: {fileID: 8300000, guid: 4ee74f0181a7b704291e758efc69bfb7, type: 3}
   moveSpeed: 7
   isLookLeft: 0
