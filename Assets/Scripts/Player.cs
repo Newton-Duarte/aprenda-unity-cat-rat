@@ -6,6 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     GameController _gameController;
+    OptionsController _optionsController;
     SpriteRenderer playerSr;
     Rigidbody2D playerRb;
     Animator playerAnim;
@@ -13,7 +14,6 @@ public class Player : MonoBehaviour
     [Header("Move Config.")]
     [SerializeField] float moveSpeed;
     [SerializeField] float jumpForce;
-    [SerializeField] AudioSource fxSource;
     [SerializeField] AudioClip fxJump;
 
     [Header("Ground Check")]
@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         _gameController = FindObjectOfType(typeof(GameController)) as GameController;
+        _optionsController = FindObjectOfType(typeof(OptionsController)) as OptionsController;
         playerSr = GetComponent<SpriteRenderer>();
         playerRb = GetComponent<Rigidbody2D>();
         playerAnim = GetComponent<Animator>();
@@ -68,10 +69,10 @@ public class Player : MonoBehaviour
         }
         else if (_gameController.currentState == gameState.gamewin)
         {
+            playerRb.velocity = Vector2.zero;
             playerRb.gravityScale = 0;
-            playerRb.velocity = new Vector2(0, 0);
             isGrounded = true;
-            transform.position = Vector3.MoveTowards(transform.position, _gameController.ratHole.position, 2 * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, _gameController.ratHole.position, 2.5f * Time.deltaTime);
 
             if (transform.position == _gameController.ratHole.position)
             {
@@ -107,7 +108,7 @@ public class Player : MonoBehaviour
     void jump()
     {
         playerRb.AddForce(new Vector2(playerRb.velocity.x, jumpForce));
-        fxSource.PlayOneShot(fxJump);
+        _optionsController.fxSource.PlayOneShot(fxJump);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

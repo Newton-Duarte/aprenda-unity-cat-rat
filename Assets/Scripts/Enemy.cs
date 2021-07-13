@@ -5,8 +5,10 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     GameController _gameController;
+    OptionsController _optionsController;
     Animator enemyAnim;
 
+    [SerializeField] AudioClip attackClip;
     [SerializeField] float moveSpeed;
     [SerializeField] bool isLookLeft;
     bool isCaughtTheMouse;
@@ -15,6 +17,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         _gameController = FindObjectOfType(typeof(GameController)) as GameController;
+        _optionsController = FindObjectOfType(typeof(OptionsController)) as OptionsController;
         enemyAnim = GetComponent<Animator>();
     }
 
@@ -38,6 +41,7 @@ public class Enemy : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            _optionsController.fxSource.PlayOneShot(attackClip);
             Destroy(collision.gameObject);
             isCaughtTheMouse = true;
             _gameController.gameOver();
