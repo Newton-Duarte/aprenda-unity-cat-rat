@@ -76,7 +76,14 @@ public class OptionsController : MonoBehaviour
         alertVolumeText.text = Mathf.Round(alertVol * 100).ToString();
     }
 
-    void toggleOptions() => optionsPanel.SetActive(!optionsPanel.activeInHierarchy);
+    void toggleOptions()
+    {
+        if (optionsPanel.activeInHierarchy) { musicSource.Play(); }
+        else { musicSource.Pause(); }
+
+        Time.timeScale = optionsPanel.activeInHierarchy ? 1 : 0;
+        optionsPanel.SetActive(!optionsPanel.activeInHierarchy);
+    }
 
     public void changeMusicVolume()
     {
